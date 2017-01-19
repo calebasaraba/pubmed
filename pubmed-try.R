@@ -19,8 +19,6 @@ amr_df <- tibble(PMID = PMID(amr_records), Author = Author(amr_records), YearEpu
 
 
 
-
-
 ##### Testing Stuff
 pp <- YearPpublish(amr_records)
 
@@ -36,6 +34,8 @@ table(pubmed, useNA = "ifany")
 table(amr_records@YearAccepted, useNA = "ifany")
 table(amr_records@YearEpublish, useNA = "ifany")
 table(amr_records@YearPpublish, useNA = "ifany")
+
+
 table(amr_records@ISSN, useNA = "ifany")
 
 dance_query <- "dance"
