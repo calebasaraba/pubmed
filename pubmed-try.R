@@ -1,6 +1,9 @@
 ### PUBMED
 
 library(RISmed)
+library(tidyverse)
+library(metagear)
+library(stringr)
 
 
 amr_query <- "(((((((antibiotic AND (resistance OR resistant))) OR (antimicrobial AND (resistance OR resistant))) AND (novel OR first OR new OR emerging OR emergent)) AND (case OR patient)) AND humans[Filter]) AND (\"2006\"[Date - Publication] : \"2017\"[Date - Publication]))"
@@ -17,32 +20,21 @@ amr_df <- tibble(PMID = PMID(amr_records), Author = Author(amr_records), YearEpu
                      PublicationStatus = PublicationStatus(amr_records), ArticleId = ArticleId(amr_records), Volume = Volume(amr_records),
                      Issue = Issue(amr_records), ISOAbbreviation = ISOAbbreviation(amr_records), Country = Country(amr_records))
 
+initialized_amr <- effort_initialize(amr_df)
+
+distributed_amr <- effort_distribute(initialized_amr, reviewers = c("Cale", "Allison", "Brooke")) %>%
+  select(-Author, -PublicationType)
 
 
-##### Testing Stuff
-pp <- YearPpublish(amr_records)
+distributed_amr %>%
+  filter(REVIEWERS == "Allison") %>%
+  write_csv("allison_amr.csv")
 
-table(pp, useNA = "ifany")
+distributed_amr %>%
+  filter(REVIEWERS == "Brooke") %>%
+  write_csv("brooke_amr.csv")
 
-ep <- YearEpublish(amr_records)
+distributed_amr %>%
+  filter(REVIEWERS == "Cale") %>%
+  write_csv("cale_amr.csv")
 
-table(ep, useNA = "ifany")
-
-pubmed <- YearPubmed(amr_records)
-table(pubmed, useNA = "ifany")
-
-table(amr_records@YearAccepted, useNA = "ifany")
-table(amr_records@YearEpublish, useNA = "ifany")
-table(amr_records@YearPpublish, useNA = "ifany")
-
-
-table(amr_records@ISSN, useNA = "ifany")
-
-dance_query <- "dance"
-
-dance_search <- EUtilsSummary(dance_query, retmax = 15000)
-
-dance_records <- EUtilsGet(dance_search)
-
-table(dance_records@YearPpublish, useNA = "ifany")
-table(dance_records@YearEpublish, useNA = "ifany")
